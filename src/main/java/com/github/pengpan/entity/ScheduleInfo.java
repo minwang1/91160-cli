@@ -10,6 +10,8 @@ public class ScheduleInfo {
 
     private String doctor_name;
 
+    private String doctor_id;
+
     private int left_num;
 
     private String schedule_id;

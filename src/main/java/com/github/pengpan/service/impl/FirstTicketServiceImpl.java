@@ -45,8 +45,10 @@ public class FirstTicketServiceImpl extends AbstractTicketService {
         List<String> keyList = new ArrayList<>();
         for (String day : config.getDays()) {
             for (String week : weeks) {
-                String key = StrUtil.format("$.{}.{}.{}", config.getDoctorId(), day, week);
-                keyList.add(key);
+                for (String doctorId : config.getDoctorIds()) {
+                    String key = StrUtil.format("$.{}.{}.{}", doctorId, day, week);
+                    keyList.add(key);
+                }
             }
         }
         return keyList;

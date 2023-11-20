@@ -45,11 +45,13 @@ public class SecondTicketServiceImpl extends AbstractTicketService {
         List<String> keyList = new ArrayList<>();
         for (String day : config.getDays()) {
             for (String week : weeks) {
-                String key = StrUtil.format("$.{}.{}.{}",
-                        StrUtil.format("{}_{}", config.getDeptId(), config.getDoctorId()),
-                        StrUtil.format("{}_{}_{}", config.getDeptId(), config.getDoctorId(), day),
-                        week);
-                keyList.add(key);
+                for (String doctorId : config.getDoctorIds()) {
+                    String key = StrUtil.format("$.{}.{}.{}",
+                            StrUtil.format("{}_{}", config.getDeptId(), doctorId),
+                            StrUtil.format("{}_{}_{}", config.getDeptId(), doctorId, day),
+                            week);
+                    keyList.add(key);
+                }
             }
         }
         return keyList;
@@ -59,21 +61,26 @@ public class SecondTicketServiceImpl extends AbstractTicketService {
     public List<ScheduleInfo> getTicket(Config config, List<String> keyList) {
         String unitId = config.getUnitId();
         String deptId = config.getDeptId();
-        String doctorId = config.getDoctorId();
+        //String doctorId = config.getDoctorId();
+        List<String> doctorIds = config.getDoctorIds();
         String brushStartDate = config.getBrushStartDate();
 
         String url = "https://gate.91160.com/guahao/v1/pc/sch/doctor";
         String date = StrUtil.isBlank(brushStartDate) ? DateUtil.today() : brushStartDate;
         String userKey = CookieStore.accessHash();
         int days = 6;
-        DoctorSch doctorSch = mainClient.doctor(url, userKey, doctorId, doctorId, unitId, deptId, date, days);
+        Map<String, Object> ticketData = new HashMap<>();
+        for (String doctorId : doctorIds) {
 
-        if (doctorSch == null || !Objects.equals(1, doctorSch.getCode())) {
-            log.warn("获取数据失败: {}", JSONKit.toJson(doctorSch));
-            return null;
+            DoctorSch doctorSch = mainClient.doctor(url, userKey, doctorId, doctorId, unitId, deptId, date, days);
+
+            if (doctorSch == null || !Objects.equals(1, doctorSch.getCode())) {
+                log.warn("获取数据失败: {}", JSONKit.toJson(doctorSch));
+                return null;
+            }
+
+            ticketData.putAll(doctorSch.getSch());
         }
-
-        Map<String, Object> ticketData = doctorSch.getSch();
         String sch = Optional.ofNullable(ticketData).map(JSONKit::toJson).orElseGet(String::new);
 
         return getScheduleInfos(sch, keyList);

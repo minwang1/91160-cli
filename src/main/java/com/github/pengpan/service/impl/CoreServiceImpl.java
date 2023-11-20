@@ -146,6 +146,8 @@ public class CoreServiceImpl implements CoreService {
                     .flatMap(x -> buildForm(x, config).stream())
                     .collect(Collectors.toList());
 
+            //formList.stream().forEach(a-> log.info("form list item "+a));
+
             // 挂号
             boolean success = doRegister(formList);
             if (success) {
@@ -184,7 +186,7 @@ public class CoreServiceImpl implements CoreService {
 
         for (Register form : formList) {
 
-            int count = failCount.getOrDefault(form.getSchId(), 0);
+            int count = failCount.getOrDefault(form.getDetlid(), 0);
             Assert.isTrue(count < failCountMax, errorMsg);
 
             Response<Void> submitResp = mainClient.doSubmit(
@@ -216,7 +218,7 @@ public class CoreServiceImpl implements CoreService {
             }
             log.info("预约失败:{}次 ({} {})", count + 1, form.getToDate(), form.getDetlName());
 
-            failCount.put(form.getSchId(), ++count);
+            failCount.put(form.getDetlid(), ++count);
         }
         return false;
     }
@@ -275,7 +277,7 @@ public class CoreServiceImpl implements CoreService {
                         .schData(sch_data)
                         .unitId(config.getUnitId())
                         .depId(config.getDeptId())
-                        .doctorId(config.getDoctorId())
+                        .doctorId(schInfo.getDoctor_id())
                         .schId(schInfo.getSchedule_id())
                         .memberId(config.getMemberId())
                         .accept("1")

@@ -55,7 +55,7 @@ public enum InitDataEnum {
             .banner("=====请选择医生=====")
             .inputTips("请输入医生编号: ")
             .data(x -> x.getDoctor(ConfigStore.getUnitId(), ConfigStore.getDeptId()))
-            .store(ConfigStore::setDoctorId)
+            .store(ConfigStore::setDoctorIds)
             .build()),
 
     WEEK(InitData.builder()

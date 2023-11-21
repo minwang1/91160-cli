@@ -11,7 +11,7 @@ public class ConfigStore {
 
     private static String deptId;
 
-    private static String doctorId;
+    private static String doctorIds;
 
     private static String weekId;
 
@@ -43,12 +43,12 @@ public class ConfigStore {
         ConfigStore.deptId = deptId;
     }
 
-    public static String getDoctorId() {
-        return doctorId;
+    public static String getDoctorIds() {
+        return doctorIds;
     }
 
-    public static void setDoctorId(String doctorId) {
-        ConfigStore.doctorId = doctorId;
+    public static void setDoctorIds(String doctorIds) {
+        ConfigStore.doctorIds = doctorIds;
     }
 
     public static String getWeekId() {
